@@ -110,285 +110,49 @@ public:
 		engine.discard(_amount);
 	}
 
+	//Default random functions
 	template <typename ReturnType, typename DistributionType = std::conditional<std::is_integral<ReturnType>::value, Distribution::UniformInt<ReturnType>, Distribution::UniformReal<ReturnType>>::type>
 	ReturnType random()
 	{
+		static_assert(std::is_arithmetic<ReturnType>::value, "ReturnType needs to be an arithmetic value!");
 		DistributionType dist;
 		return dist(engine);
 	}
 
-
-
-	/*{
+	template <typename ReturnType, typename DistributionType = std::conditional<std::is_integral<ReturnType>::value, Distribution::UniformInt<ReturnType>, Distribution::UniformReal<ReturnType>>::type>
+	ReturnType random(const ReturnType _min, const ReturnType _max)
+	{
 		static_assert(std::is_arithmetic<ReturnType>::value, "ReturnType needs to be an arithmetic value!");
 		DistributionType dist;
-		return dist()
-	}*/
+		return dist(engine, {_min, _max});
+	}
 
-	//template <typename ReturnType, typename DistributionType>
-	//ReturnType random(const ReturnType _min, const ReturnType _max, const RandomDistribution _distribution = Uniform)
-	//{
-	//	static_assert(std::is_arithmetic<ReturnType>::value, "ReturnType needs to be an arithmetic value!");
-	//	switch (_distribution)
-	//	{
-	//	case Uniform:
-	//	{
-	//		typedef std::conditional<std::is_integral<ReturnType>::value, std::uniform_int_distribution<ReturnType>, std::uniform_real_distribution<ReturnType>>::type _uniform_distribution;
-	//		_uniform_distribution dist;
-	//		return dist(engine, { _min, _max });
-	//	}
-	//	case Binomial:
-	//	{
-	//		return random<ReturnType>(std::numeric_limits<ReturnType>::min(), std::numeric_limits<ReturnType>::max(), 0.5, _distribution);
-	//	}
+	//Functions for certain distirbutions
+	template <typename ReturnType, typename DistributionType = Distribution::Bernoulli>
+	ReturnType random(const double _probability)
+	{
+		static_assert(std::is_arithmetic<ReturnType>::value, "ReturnType needs to be an arithmetic value!");
+		DistributionType dist(_probability);
+		return dist(engine);
+	}
 
-	//	case Geometric:
-	//	{
+	template <typename ReturnType, typename DistributionType = Distribution::Binomial<ReturnType>>
+	ReturnType random(const double _probability, const ReturnType _min, const ReturnType _max)
+	{
+		static_assert(std::is_arithmetic<ReturnType>::value, "ReturnType needs to be an arithmetic value!");
+		DistributionType dist(double(_max - _min), _probability);
+		return _min + dist(engine);
+	}
 
-	//	}
-	//	case Pascal:
-	//	{
+	//Special functions
+	/*
+	circle
+	square
+	coin
+	unit
+	dice
+	*/
 
-	//	}
-	//	case Poisson:
-	//	{
-
-	//	}
-	//	case Exponential:
-	//	{
-
-	//	}
-	//	case Gamma:
-	//	{
-
-	//	}
-	//	case Weibull:
-	//	{
-
-	//	}
-	//	case ExtremeValue:
-	//	{
-
-	//	}
-	//	case Normal:
-	//	{
-
-	//	}
-	//	case Lognormal:
-	//	{
-
-	//	}
-	//	case ChiSquared:
-	//	{
-
-	//	}
-	//	case Cauchy:
-	//	{
-
-	//	}
-	//	case FisherF:
-	//	{
-
-	//	}
-	//	case StudentT:
-	//	{
-
-	//	}
-	//	case Discrete:
-	//	{
-
-	//	}
-	//	case PiecewiseConstant:
-	//	{
-
-	//	}
-	//	case PiecewiseLinear:
-	//	{
-
-	//	}
-
-	//	case Bernoulli:
-	//	default:
-	//		assert(false);
-	//		break;
-	//	}
-	//	return 0;
-	//}
-
-	//template <typename ReturnType>
-	//ReturnType random(const double _probability, const RandomDistribution _distribution)
-	//{
-	//	static_assert(std::is_arithmetic<ReturnType>::value, "ReturnType needs to be an arithmetic value!");
-	//	switch (_distribution)
-	//	{
-	//	case Bernoulli:
-	//	{
-	//		std::bernoulli_distribution dist(_probability);
-	//		return dist(engine);
-	//	}
-	//	case Binomial:
-	//	{
-	//		return random<ReturnType>(std::numeric_limits<ReturnType>::min(), std::numeric_limits<ReturnType>::max(), _probability, _distribution);
-	//	}
-
-	//	case Geometric:
-	//	{
-
-	//	}
-	//	case Pascal:
-	//	{
-
-	//	}
-	//	case Poisson:
-	//	{
-
-	//	}
-	//	case Exponential:
-	//	{
-
-	//	}
-	//	case Gamma:
-	//	{
-
-	//	}
-	//	case Weibull:
-	//	{
-
-	//	}
-	//	case ExtremeValue:
-	//	{
-
-	//	}
-	//	case Normal:
-	//	{
-
-	//	}
-	//	case Lognormal:
-	//	{
-
-	//	}
-	//	case ChiSquared:
-	//	{
-
-	//	}
-	//	case Cauchy:
-	//	{
-
-	//	}
-	//	case FisherF:
-	//	{
-
-	//	}
-	//	case StudentT:
-	//	{
-
-	//	}
-	//	case Discrete:
-	//	{
-
-	//	}
-	//	case PiecewiseConstant:
-	//	{
-
-	//	}
-	//	case PiecewiseLinear:
-	//	{
-
-	//	}
-
-	//	case Uniform:
-	//	default:
-	//		assert(false);
-	//		break;
-	//	}
-	//	return 0;
-	//}
-
-	//template <typename ReturnType>
-	//ReturnType random(const ReturnType _min, const ReturnType _max, const double _probability, const RandomDistribution _distribution)
-	//{
-	//	static_assert(std::is_arithmetic<ReturnType>::value, "ReturnType needs to be an arithmetic value!");
-	//	switch (_distribution)
-	//	{
-	//	case Binomial:
-	//	{
-	//		std::binomial_distribution<ReturnType> dist(_probability, double(_max - _min));
-	//		return _min + dist(engine);
-	//	}
-
-	//	case Geometric:
-	//	{
-
-	//	}
-	//	case Pascal:
-	//	{
-
-	//	}
-	//	case Poisson:
-	//	{
-
-	//	}
-	//	case Exponential:
-	//	{
-
-	//	}
-	//	case Gamma:
-	//	{
-
-	//	}
-	//	case Weibull:
-	//	{
-
-	//	}
-	//	case ExtremeValue:
-	//	{
-
-	//	}
-	//	case Normal:
-	//	{
-
-	//	}
-	//	case Lognormal:
-	//	{
-
-	//	}
-	//	case ChiSquared:
-	//	{
-
-	//	}
-	//	case Cauchy:
-	//	{
-
-	//	}
-	//	case FisherF:
-	//	{
-
-	//	}
-	//	case StudentT:
-	//	{
-
-	//	}
-	//	case Discrete:
-	//	{
-
-	//	}
-	//	case PiecewiseConstant:
-	//	{
-
-	//	}
-	//	case PiecewiseLinear:
-	//	{
-
-	//	}
-
-	//	case Uniform:
-	//	case Bernoulli:
-	//	default:
-	//		assert(false);
-	//		break;
-	//	}
-	//	return 0;
-	//}
 
 private:
 	SeedType randomSeed;
