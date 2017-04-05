@@ -111,15 +111,21 @@ public:
 	}
 
 	//Default random functions
-	template <typename ReturnType, typename DistributionType = std::conditional<std::is_integral<ReturnType>::value, Distribution::UniformInt<ReturnType>, Distribution::UniformReal<ReturnType>>::type>
-	ReturnType random()
+	template <typename ReturnType, typename DistributionType = std::conditional<std::is_floating_point<ReturnType>::value, Distribution::UniformReal<ReturnType>, Distribution::UniformInt<ReturnType>>::type>
+	typename std::enable_if<sizeof(ReturnType) != 1, ReturnType>::type random()
 	{
 		static_assert(std::is_arithmetic<ReturnType>::value, "ReturnType needs to be an arithmetic value!");
 		DistributionType dist;
 		return dist(engine);
 	}
 
-	template <typename ReturnType, typename DistributionType = std::conditional<std::is_integral<ReturnType>::value, Distribution::UniformInt<ReturnType>, Distribution::UniformReal<ReturnType>>::type>
+	template <typename ReturnType, typename DistributionType = Distribution::UniformInt<int>>
+	typename std::enable_if<sizeof(ReturnType) == 1, ReturnType>::type random()
+	{
+		return (ReturnType) random<int>(std::numeric_limits<ReturnType>::min(), std::numeric_limits<ReturnType>::max());
+	}
+
+	template <typename ReturnType, typename DistributionType = std::conditional<std::is_floating_point<ReturnType>::value, Distribution::UniformReal<ReturnType>, Distribution::UniformInt<ReturnType>>::type>
 	ReturnType random(const ReturnType _min, const ReturnType _max)
 	{
 		static_assert(std::is_arithmetic<ReturnType>::value, "ReturnType needs to be an arithmetic value!");

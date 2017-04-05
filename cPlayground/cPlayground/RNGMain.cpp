@@ -11,7 +11,7 @@ int main()
 	
 	for (size_t i = 0; i < 100; i++)
 	{
-		std::cout << random.random<int, Distribution::Binomial<int>>(0.5, 0, 100) << std::endl;
+		std::cout << random.random<float>() << std::endl;
 	}
 
 	std::cin.ignore();
